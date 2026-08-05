@@ -30,14 +30,18 @@ kind create cluster --name not-so-simple-platform-cluster-dev --config "${REPO_R
 
 echo ""
 echo "======================================"
-echo "Installing ingress controller..."
+echo "Installing Gateway API CRDs..."
 echo "======================================"
 
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.0/deploy/static/provider/kind/deploy.yaml
-kubectl wait --namespace ingress-nginx \
-  --for=condition=ready pod \
-  -l app.kubernetes.io/component=controller \
-  --timeout=180s
+kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.2.0/standard-install.yaml
+kubectl wait --for=condition=Established crd/gatewayclasses.gateway.networking.k8s.io --timeout=180s
+kubectl wait --for=condition=Established crd/gateways.gateway.networking.k8s.io --timeout=180s
+kubectl wait --for=condition=Established crd/httproutes.gateway.networking.k8s.io --timeout=180s
+
+echo ""
+echo "======================================"
+echo "Configuring host entry for Ingress . . ."
+echo "======================================"
 
 ensure_hosts_entry
 
@@ -54,7 +58,7 @@ echo "Installing ArgoCD..."
 echo "======================================"
 helm upgrade --install argocd argocd/argo-cd \
   --namespace argocd \
-  -f "${REPO_ROOT}/infra/argocd-values.yaml" \
+  -f "${REPO_ROOT}/dev/argocd-values.yaml" \
   --create-namespace \
   --wait
 
