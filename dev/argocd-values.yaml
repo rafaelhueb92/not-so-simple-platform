@@ -1,0 +1,6 @@
+configs:
+  params:
+    application.instanceLabelKey: argocd.argoproj.io/instance
+
+server:
+  insecure: true

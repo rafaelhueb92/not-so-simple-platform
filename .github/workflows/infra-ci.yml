@@ -1,0 +1,13 @@
+name: Infra CI
+on:
+  push:
+    paths:
+      - 'infra/**'
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v2
+      - run: terraform init
+      - run: terraform plan -var="install_argocd=false"

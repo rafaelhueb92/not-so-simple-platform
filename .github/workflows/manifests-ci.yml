@@ -1,0 +1,14 @@
+name: Manifests CI
+on:
+  push:
+    paths:
+      - 'app/manifest/**'
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          curl -sSL -o kubeval https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64
+          chmod +x kubeval
+          find app/manifest -name "*.yaml" -exec ./kubeval {} \;

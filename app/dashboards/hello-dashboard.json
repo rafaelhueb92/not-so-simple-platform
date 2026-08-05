@@ -1,0 +1,19 @@
+{
+  "dashboard": {
+    "title": "Hello App Metrics",
+    "panels": [
+      {
+        "title": "Requests Total",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(hello_requests_total[5m])",
+            "legendFormat": "requests/sec"
+          }
+        ]
+      }
+    ],
+    "schemaVersion": 16,
+    "version": 1
+  }
+}
