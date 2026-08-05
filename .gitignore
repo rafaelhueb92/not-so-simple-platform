@@ -11,3 +11,5 @@ venv/
 .venv/
 .terraform.lock.hcl
 infra/.terraform.tfstate.lock.info
+secret-argo.txt
+dev/secret-argo.txt

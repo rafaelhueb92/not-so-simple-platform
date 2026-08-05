@@ -1,0 +1,17 @@
+node_modules
+.git
+.github
+.venv
+__pycache__
+*.pyc
+.pytest_cache
+.mypy_cache
+*.egg-info
+dist
+build
+.DS_Store
+*.log
+tests
+dashboards
+manifest
+.pytest_cache
