@@ -30,20 +30,10 @@ kind create cluster --name not-so-simple-platform-cluster-dev --config "${REPO_R
 
 echo ""
 echo "======================================"
-echo "Installing Gateway API CRDs..."
+echo "Removing node.kubernetes.io/exclude-from-external-load-balancers label from the control-plane node..."
 echo "======================================"
 
-kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.0.0/standard-install.yaml
-kubectl wait --for=condition=Established crd/gatewayclasses.gateway.networking.k8s.io --timeout=180s
-kubectl wait --for=condition=Established crd/gateways.gateway.networking.k8s.io --timeout=180s
-kubectl wait --for=condition=Established crd/httproutes.gateway.networking.k8s.io --timeout=180s
-
-echo ""
-echo "======================================"
-echo "Configuring host entry for Ingress . . ."
-echo "======================================"
-
-ensure_hosts_entry
+kubectl label node kind-control-plane node.kubernetes.io/exclude-from-external-load-balancers-
 
 echo ""
 echo "======================================"
@@ -74,7 +64,6 @@ helm repo add prometheus-community https://prometheus-community.github.io/helm-c
 helm repo update
 
 helm install kube-prometheus prometheus-community/kube-prometheus-stack
-
 
 echo ""
 echo "======================================"

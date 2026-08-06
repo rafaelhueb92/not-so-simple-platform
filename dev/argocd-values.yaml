@@ -4,3 +4,10 @@ configs:
 
 server:
   insecure: true
+
+global:
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "argocd"
+      effect: "NoSchedule"
