@@ -67,4 +67,4 @@ echo "======================================"
 echo "Adding Argo App..."
 echo "======================================"
 
-kubectl apply -f "${REPO_ROOT}/app/manifest/argocd-application.yaml"
+kubectl apply -f "${REPO_ROOT}/dev/manifest/argocd-application.yaml"
