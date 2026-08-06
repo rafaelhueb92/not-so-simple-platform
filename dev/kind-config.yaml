@@ -2,19 +2,6 @@ kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
   - role: control-plane
-    kubeadmConfigPatches:
-      - |
-        kind: InitConfiguration
-        nodeRegistration:
-          kubeletExtraArgs:
-            node-labels: "ingress-ready=true"
-    extraPortMappings:
-      - containerPort: 80
-        hostPort: 80
-        protocol: TCP
-      - containerPort: 443
-        hostPort: 443
-        protocol: TCP
   - role: worker
   - role: worker
   - role: worker
@@ -24,6 +11,18 @@ nodes:
         nodeRegistration:
           kubeletExtraArgs:
             register-with-taints: "dedicated=argocd:NoSchedule"
+            node-labels: "dedicated=argocd"
+  # Dedicated node for the monitoring stack (Prometheus, Grafana, Alertmanager).
+  # Mirrors an EKS managed node group labelled+tainted dedicated=monitoring
+  # (see infra/eks/monitoring-nodegroup.yaml).
+  - role: worker
+    kubeadmConfigPatches:
+      - |
+        kind: JoinConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            register-with-taints: "dedicated=monitoring:NoSchedule"
+            node-labels: "dedicated=monitoring"
 containerdConfigPatches:
   - |
     [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:5000"]

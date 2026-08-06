@@ -11,3 +11,11 @@ global:
       operator: "Equal"
       value: "argocd"
       effect: "NoSchedule"
+  affinity:
+    nodeAffinity:
+      type: hard
+      matchExpressions:
+        - key: dedicated
+          operator: In
+          values:
+            - argocd

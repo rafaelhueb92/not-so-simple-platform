@@ -19,7 +19,8 @@ spec:
           image: not-so-simple-platform-cluster-dev-py:v1.0
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 8000
+            - name: http
+              containerPort: 8000
           readinessProbe:
             httpGet:
               path: /health

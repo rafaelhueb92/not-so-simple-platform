@@ -13,3 +13,4 @@ venv/
 infra/.terraform.tfstate.lock.info
 secret-argo.txt
 dev/secret-argo.txt
+.claude/

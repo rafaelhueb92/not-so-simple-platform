@@ -1,0 +1,99 @@
+# kube-prometheus-stack values — pins the monitoring stack to the node
+# labelled/tainted dedicated=monitoring (KIND worker4 or EKS monitoring node group).
+#
+# Portability: only nodeSelector + tolerations are used here, so this file is
+# cloud-agnostic. The node itself is provisioned differently per environment:
+#   - KIND: dev/kind-config.yaml (worker with register-with-taints + node-labels)
+#   - EKS:  infra/eks/monitoring-nodegroup.yaml (managed node group labels+taints)
+#
+# Storage: `standard` is KIND's default (local-path) StorageClass. On EKS,
+# override storageClassName to `gp3` (requires the EBS CSI driver + a gp3
+# StorageClass), e.g. via a prod overlay or --set.
+
+# Reusable anchors for the dedicated-node placement.
+_nodeSelector: &monitoringNodeSelector
+  dedicated: monitoring
+_tolerations: &monitoringTolerations
+  - key: dedicated
+    operator: Equal
+    value: monitoring
+    effect: NoSchedule
+
+# ---- Prometheus server ----
+prometheus:
+  prometheusSpec:
+    nodeSelector: *monitoringNodeSelector
+    tolerations: *monitoringTolerations
+    # Discover ServiceMonitors/PodMonitors/Rules in ALL namespaces regardless of
+    # the `release` label — otherwise the app's hello-servicemonitor is ignored.
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    ruleSelectorNilUsesHelmValues: false
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: standard   # EKS: gp3
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 10Gi
+
+# ---- Alertmanager ----
+alertmanager:
+  alertmanagerSpec:
+    nodeSelector: *monitoringNodeSelector
+    tolerations: *monitoringTolerations
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: standard   # EKS: gp3
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 2Gi
+
+# ---- Prometheus Operator (+ its admission webhook patch jobs) ----
+prometheusOperator:
+  nodeSelector: *monitoringNodeSelector
+  tolerations: *monitoringTolerations
+  admissionWebhooks:
+    patch:
+      nodeSelector: *monitoringNodeSelector
+      tolerations: *monitoringTolerations
+
+# ---- Grafana (subchart) ----
+grafana:
+  nodeSelector: *monitoringNodeSelector
+  tolerations: *monitoringTolerations
+  # Admin credentials sourced from a pre-created Secret (created in dev/init.sh).
+  admin:
+    existingSecret: grafana-admin
+    userKey: admin-user
+    passwordKey: admin-password
+  # Dashboard sidecar: auto-imports any ConfigMap labelled grafana_dashboard="1"
+  # in the monitoring namespace. dev/init.sh creates the hello-dashboard CM.
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+      labelValue: "1"
+      searchNamespace: monitoring
+  persistence:
+    enabled: true
+    type: pvc
+    storageClassName: standard         # EKS: gp3
+    accessModes: ["ReadWriteOnce"]
+    size: 5Gi
+
+# ---- kube-state-metrics (subchart) ----
+kube-state-metrics:
+  nodeSelector: *monitoringNodeSelector
+  tolerations: *monitoringTolerations
+
+# ---- node-exporter (subchart) ----
+# DaemonSet: MUST run on every node (it scrapes per-node metrics), including the
+# tainted monitoring node and the argocd node — so it tolerates ALL taints and
+# is NOT pinned with a nodeSelector.
+prometheus-node-exporter:
+  tolerations:
+    - operator: Exists

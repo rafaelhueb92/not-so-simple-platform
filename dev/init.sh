@@ -46,7 +46,26 @@ echo "======================================"
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
 
-helm install kube-prometheus prometheus-community/kube-prometheus-stack
+echo "Creating 'monitoring' namespace and Grafana admin secret..."
+kubectl create namespace monitoring --dry-run=client -o yaml | kubectl apply -f -
+
+GRAFANA_PASSWORD="$(openssl rand -base64 18)"
+kubectl -n monitoring create secret generic grafana-admin \
+  --from-literal=admin-user=admin \
+  --from-literal=admin-password="${GRAFANA_PASSWORD}" \
+  --dry-run=client -o yaml | kubectl apply -f -
+echo "${GRAFANA_PASSWORD}" > secret-grafana.txt
+echo "Grafana admin password written to secret-grafana.txt"
+
+helm upgrade --install kube-prometheus prometheus-community/kube-prometheus-stack \
+  --namespace monitoring \
+  -f "${REPO_ROOT}/dev/prometheus-values.yaml"
+
+echo "Loading Grafana dashboard (hello-dashboard.json) via sidecar ConfigMap..."
+kubectl -n monitoring create configmap hello-dashboard \
+  --from-file=hello-dashboard.json="${REPO_ROOT}/app/dashboards/hello-dashboard.json" \
+  --dry-run=client -o yaml | kubectl apply -f -
+kubectl -n monitoring label configmap hello-dashboard grafana_dashboard=1 --overwrite
 
 echo ""
 echo "======================================"
@@ -67,4 +86,15 @@ echo "======================================"
 echo "Adding Argo App..."
 echo "======================================"
 
-kubectl apply -f "${REPO_ROOT}/dev/manifest/argocd-application.yaml"
+kubectl apply -f "${REPO_ROOT}/app/manifest/argocd-application.yaml"
+
+echo ""
+echo "======================================"
+echo "Run sudo cloud-provider-kind --enable-lb-port-mapping in a separate terminal to enable LoadBalancer support in Kind cluster."
+echo "Access localhost:80"
+echo "======================================"
+echo "To Access the tools:"
+echo ""
+echo "Grafana: kubectl port-forward -n monitoring svc/prom-stack-grafana 3000:80"
+echo "ArgoCD: kubectl port-forward -n argocd svc/argocd-server 8080:80"
+echo "======================================"

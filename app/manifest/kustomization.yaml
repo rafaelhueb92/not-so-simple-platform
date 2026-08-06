@@ -3,7 +3,4 @@ kind: Kustomization
 resources:
   - deployment.yaml
   - service.yaml
-  - gateway.yaml
-  - gateway-controller.yaml
-  - gateway-http-route.yaml
   - servicemonitor.yaml
