@@ -1,10 +1,20 @@
-apiVersion: gateway.networking.k8s.io/v1
+apiVersion: gateway.networking.k8s.io/v1beta1
 kind: Gateway
 metadata:
-  name: demo-gateway
+  name: hello-alb-gateway
+namespace: eks-gateway-demo
 spec:
-  gatewayClassName: hello-gateway-class
+  gatewayClassName: aws-alb-gateway-class
+  infrastructure:
+    parametersRef:
+      kind: LoadBalancerConfiguration
+      name: lbconfig-gateway
+      group: gateway.k8s.aws
   listeners:
-    - name: http
-      protocol: HTTP
-      port: 80
+    - name: https
+      hostname: "hello.api.com"
+      protocol: HTTPS
+      port: 443
+      allowedRoutes:
+        namespaces:
+          from: Same

@@ -3,8 +3,8 @@ kind: Kustomization
 resources:
   - deployment.yaml
   - service.yaml
-  - gateway-envoy.yaml
   - gateway.yaml
-  - gateway-controller.yaml
-  - gateway-http-route.yaml
+  - gateway-lb-config.yaml
+  - gateway-class.yaml
+  - gateway-class.yaml
   - servicemonitor.yaml

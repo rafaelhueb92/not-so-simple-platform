@@ -1,0 +1,10 @@
+apiVersion: gateway.k8s.aws/v1beta1
+kind: LoadBalancerConfiguration
+metadata:
+  name: hello-alb-config
+  namespace: eks-gateway-demo
+spec:
+  listenerConfigurations:
+    - protocolPort: HTTPS:80
+      #- protocolPort: HTTPS:443
+      #defaultCertificate: arn:aws:acm:REGION:ACCOUNT_ID:certificate/CERT_ID
