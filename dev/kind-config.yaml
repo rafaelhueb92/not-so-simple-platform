@@ -18,13 +18,12 @@ nodes:
   - role: worker
   - role: worker
   - role: worker
-    name: argocd-node
     kubeadmConfigPatches:
-  - |
-    kind: JoinConfiguration
-    nodeRegistration:
-      kubeletExtraArgs:
-        register-with-taints: "dedicated=argocd:NoSchedule"
+      - |
+        kind: JoinConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            register-with-taints: "dedicated=argocd:NoSchedule"
 containerdConfigPatches:
   - |
     [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:5000"]

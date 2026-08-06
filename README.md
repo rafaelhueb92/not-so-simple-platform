@@ -22,3 +22,4 @@ See `docs/walkthrough.md` for a guided tour.
 
 https://kubernetes.io/blog/2026/01/28/experimenting-gateway-api-with-kind/
 https://github.com/kubernetes-sigs/cloud-provider-kind
+docker exec -it kind-control-plane crictl images

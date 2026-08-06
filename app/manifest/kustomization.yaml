@@ -4,7 +4,6 @@ resources:
   - deployment.yaml
   - service.yaml
   - gateway.yaml
-  # - gateway-lb-config.yaml
-  - gateway-class.yaml
+  - gateway-controller.yaml
   - gateway-http-route.yaml
   - servicemonitor.yaml
