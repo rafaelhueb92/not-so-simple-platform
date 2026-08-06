@@ -33,10 +33,20 @@ echo "======================================"
 echo "Installing Gateway API CRDs..."
 echo "======================================"
 
-kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.2.0/standard-install.yaml
+kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.0.0/standard-install.yaml
 kubectl wait --for=condition=Established crd/gatewayclasses.gateway.networking.k8s.io --timeout=180s
 kubectl wait --for=condition=Established crd/gateways.gateway.networking.k8s.io --timeout=180s
 kubectl wait --for=condition=Established crd/httproutes.gateway.networking.k8s.io --timeout=180s
+
+echo ""
+echo "======================================"
+echo "Installing Envoy Gateway Controller ..."
+echo "======================================"
+
+kubectl apply -f https://github.com/envoyproxy/gateway/releases/download/v1.0.0/install.yaml
+
+kubectl wait --timeout=2m -n envoy-gateway-system \
+  deployment/envoy-gateway --for=condition=Available
 
 echo ""
 echo "======================================"
