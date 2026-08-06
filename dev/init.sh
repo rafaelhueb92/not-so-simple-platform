@@ -40,16 +40,6 @@ kubectl wait --for=condition=Established crd/httproutes.gateway.networking.k8s.i
 
 echo ""
 echo "======================================"
-echo "Installing Envoy Gateway Controller ..."
-echo "======================================"
-
-kubectl apply -f https://github.com/envoyproxy/gateway/releases/download/v1.0.0/install.yaml
-
-kubectl wait --timeout=2m -n envoy-gateway-system \
-  deployment/envoy-gateway --for=condition=Available
-
-echo ""
-echo "======================================"
 echo "Configuring host entry for Ingress . . ."
 echo "======================================"
 

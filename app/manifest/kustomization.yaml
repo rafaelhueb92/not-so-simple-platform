@@ -6,5 +6,5 @@ resources:
   - gateway.yaml
   - gateway-lb-config.yaml
   - gateway-class.yaml
-  - gateway-class.yaml
+  - gateway-http-route.yaml
   - servicemonitor.yaml
