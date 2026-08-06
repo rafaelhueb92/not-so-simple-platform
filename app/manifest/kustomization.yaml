@@ -6,6 +6,5 @@ resources:
   - gateway-envoy.yaml
   - gateway.yaml
   - gateway-controller.yaml
-  - gateway-nlb.yaml
   - gateway-http-route.yaml
   - servicemonitor.yaml
