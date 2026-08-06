@@ -67,6 +67,17 @@ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.pas
 
 echo ""
 echo "======================================"
+echo "Installing Prometheus Comunity..."
+echo "======================================"
+
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+
+helm install kube-prometheus prometheus-community/kube-prometheus-stack
+
+
+echo ""
+echo "======================================"
 echo "Building Docker images..."
 echo "======================================"
 

@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: hello
-          image: localhost:5000/hello:latest
+          image: not-so-simple-platform-cluster-dev-py:v1.0
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
