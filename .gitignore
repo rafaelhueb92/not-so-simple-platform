@@ -16,3 +16,4 @@ dev/secret-argo.txt
 .claude/
 secret-grafana.txt
 permission-policy.json
+/app/*.tf
