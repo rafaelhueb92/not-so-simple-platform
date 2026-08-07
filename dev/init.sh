@@ -63,7 +63,7 @@ helm upgrade --install kube-prometheus prometheus-community/kube-prometheus-stac
 
 echo "Loading Grafana dashboard (hello-dashboard.json) via sidecar ConfigMap..."
 kubectl -n monitoring create configmap hello-dashboard \
-  --from-file=hello-dashboard.json="${REPO_ROOT}/app/dashboards/hello-dashboard.json" \
+  --from-file=hello-dashboard.json="${REPO_ROOT}/dev/dashboards/hello-dashboard.json" \
   --dry-run=client -o yaml | kubectl apply -f -
 kubectl -n monitoring label configmap hello-dashboard grafana_dashboard=1 --overwrite
 

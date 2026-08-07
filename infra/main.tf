@@ -7,6 +7,38 @@ module "eks" {
     "arn:aws:iam::${local.account_id}:user/admin"
   ]
 
+  argocd_application_manifests = [
+    {
+      apiVersion = "argoproj.io/v1alpha1"
+      kind       = "Application"
+      metadata = {
+        name      = "hello-app"
+        namespace = "argocd"
+      }
+      spec = {
+        project = "default"
+        source = {
+          repoURL        = "https://github.com/rafaelhueb92/not-so-simple-platform.git"
+          targetRevision = "HEAD"
+          path           = "apps/manifest"
+        }
+        destination = {
+          server    = "https://kubernetes.default.svc"
+          namespace = "default"
+        }
+        syncPolicy = {
+          automated = {
+            prune    = true
+            selfHeal = true
+          }
+        }
+        syncOptions = [
+          "CreateNamespace=true"
+        ]
+      }
+    }
+  ]
+
   kubernetes_version = "1.35"
 
 }

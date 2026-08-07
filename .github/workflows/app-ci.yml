@@ -25,8 +25,8 @@ env:
   PYTHON_VERSION: "3.11"
   NODE_VERSION: "18"
   AWS_REGION: ${{ vars.AWS_REGION || secrets.AWS_REGION }}
-  ECR_REGISTRY: ${{ vars.AWS_ECR_REGISTRY || secrets.AWS_ECR_REGISTRY }}
-  ECR_REPOSITORY: ${{ vars.AWS_ECR_REPOSITORY || secrets.AWS_ECR_REPOSITORY }}
+  ECR_REGISTRY: ${{ vars.AWS_ECR_REGISTRY || vars.ECR_REGISTRY || secrets.AWS_ECR_REGISTRY || secrets.ECR_REGISTRY }}
+  ECR_REPOSITORY: ${{ vars.AWS_ECR_REPOSITORY || vars.ECR_REPOSITORY || secrets.AWS_ECR_REPOSITORY || secrets.ECR_REPOSITORY }}
 
 permissions:
   contents: read
@@ -175,8 +175,11 @@ jobs:
       - name: Validate ECR environment
         run: |
           echo "ECR_REGISTRY present? ${ECR_REGISTRY:+yes}"
+          echo "ECR_REGISTRY length: ${#ECR_REGISTRY}"
           echo "ECR_REPOSITORY present? ${ECR_REPOSITORY:+yes}"
+          echo "ECR_REPOSITORY length: ${#ECR_REPOSITORY}"
           echo "AWS_REGION present? ${AWS_REGION:+yes}"
+          echo "AWS_REGION length: ${#AWS_REGION}"
           if [ -z "$ECR_REGISTRY" ] || [ -z "$ECR_REPOSITORY" ]; then
             echo "Missing ECR_REGISTRY or ECR_REPOSITORY. Make sure the repository secrets/variables are set and available to this workflow." >&2
             exit 1
