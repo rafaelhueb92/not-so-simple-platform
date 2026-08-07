@@ -99,7 +99,7 @@ jobs:
 
       - name: Run tests with pytest
         run: |
-          pytest tests --verbose
+          pytest --verbose
 
   security:
     name: Security Scan
