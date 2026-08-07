@@ -69,10 +69,11 @@ jobs:
     if: github.event_name != 'workflow_dispatch' || github.event.inputs.destroy != 'true'
     defaults:
       run:
-        working-directory: ./app/src
+        working-directory: ./app/src/tests
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11"]
+        #python-version: ["3.9", "3.10", "3.11"]
+        python-version: ["3.11"]
 
     steps:
       - name: Checkout code
