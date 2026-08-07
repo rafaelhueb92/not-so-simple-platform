@@ -8,6 +8,7 @@ on:
   pull_request:
     paths:
       - "app/**"
+      - ".github/workflows/app-ci.yml"
     branches: [master]
   workflow_dispatch:
     inputs:
@@ -36,6 +37,31 @@ defaults:
     working-directory: ./app
 
 jobs:
+  lint:
+    name: Python Lint
+    runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch' || github.event.inputs.destroy != 'true'
+    defaults:
+      run:
+        working-directory: ./app/src
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install lint dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff
+
+      - name: Run Ruff
+        run: ruff check . --select E9,F63,F7,F82
+
   test:
     name: Unit Tests
     runs-on: ubuntu-latest
@@ -43,7 +69,7 @@ jobs:
     if: github.event_name != 'workflow_dispatch' || github.event.inputs.destroy != 'true'
     defaults:
       run:
-        working-directory: ./app/src/tests
+        working-directory: ./app/src
     strategy:
       matrix:
         python-version: ["3.9", "3.10", "3.11"]
@@ -72,7 +98,7 @@ jobs:
 
       - name: Run tests with pytest
         run: |
-          pytest --verbose
+          pytest tests --verbose
 
   security:
     name: Security Scan
@@ -116,7 +142,7 @@ jobs:
         uses: aquasecurity/trivy-action@0.24.0
         with:
           scan-type: fs
-          scan-ref: .
+          scan-ref: app
           format: sarif
           output: trivy-fs-results.sarif
           severity: HIGH,CRITICAL
@@ -126,7 +152,7 @@ jobs:
         uses: aquasecurity/trivy-action@0.24.0
         with:
           scan-type: config
-          scan-ref: Dockerfile
+          scan-ref: app/Dockerfile
           format: sarif
           output: trivy-config-results.sarif
           severity: HIGH,CRITICAL
@@ -155,7 +181,7 @@ jobs:
           echo "Destroy mode requested."
           IMAGE_TAGS=$(aws ecr describe-images --repository-name "$ECR_REPOSITORY" --region "$AWS_REGION" --query 'imageDetails[].imageTags[?@!=null] | []' --output json || true)
           if [ -n "$IMAGE_TAGS" ] && [ "$IMAGE_TAGS" != "[]" ]; then
-            echo "$IMAGE_TAGS" | jq -r '.[] | @tsv' | while read -r tag; do
+            echo "$IMAGE_TAGS" | jq -r '.[][]' | while read -r tag; do
               aws ecr batch-delete-image --repository-name "$ECR_REPOSITORY" --region "$AWS_REGION" --image-ids imageTag="$tag" >/dev/null
             done
           fi
@@ -204,8 +230,8 @@ jobs:
         id: build
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: app/Dockerfile
+          context: app
+          file: Dockerfile
           platforms: linux/amd64
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
