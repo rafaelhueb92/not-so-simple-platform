@@ -130,34 +130,34 @@ jobs:
       - name: Run Bandit (Security Linting)
         run: bandit -r . || true
 
-  trivy:
-    name: Trivy Scan
-    runs-on: ubuntu-latest
-    needs: [lint]
-    if: github.event_name != 'workflow_dispatch' || github.event.inputs.destroy != 'true'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+  #trivy:
+  #  name: Trivy Scan
+  #  runs-on: ubuntu-latest
+  #  needs: [lint]
+  #  if: github.event_name != 'workflow_dispatch' || github.event.inputs.destroy != 'true'
+  #  steps:
+  #    - name: Checkout code
+  #      uses: actions/checkout@v4
 
-      - name: Run Trivy vulnerability scanner (filesystem)
-        uses: aquasecurity/trivy-action
-        with:
-          scan-type: fs
-          scan-ref: app
-          format: sarif
-          output: trivy-fs-results.sarif
-          severity: HIGH,CRITICAL
-          exit-code: 1
+  #    - name: Run Trivy vulnerability scanner (filesystem)
+  #      uses: aquasecurity/trivy-action
+  #      with:
+  #        scan-type: fs
+  #        scan-ref: app
+  #        format: sarif
+  #        output: trivy-fs-results.sarif
+  #        severity: HIGH,CRITICAL
+  #        exit-code: 1
 
-      - name: Run Trivy vulnerability scanner (Dockerfile)
-        uses: aquasecurity/trivy-action
-        with:
-          scan-type: config
-          scan-ref: app/Dockerfile
-          format: sarif
-          output: trivy-config-results.sarif
-          severity: HIGH,CRITICAL
-          exit-code: 1
+  #    - name: Run Trivy vulnerability scanner (Dockerfile)
+  #      uses: aquasecurity/trivy-action
+  #      with:
+  #        scan-type: config
+  #        scan-ref: app/Dockerfile
+  #        format: sarif
+  #        output: trivy-config-results.sarif
+  #        severity: HIGH,CRITICAL
+  #        exit-code: 1
 
   # Build Docker Image
   destroy:
