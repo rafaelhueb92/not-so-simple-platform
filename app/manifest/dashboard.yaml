@@ -1,0 +1,31 @@
+apiVersion: v1
+data:
+  hello-dashboard.json: |
+    {
+      "id": null,
+      "uid": "hello-app-metrics",
+      "title": "Hello App Metrics",
+      "schemaVersion": 16,
+      "version": 1,
+      "time": { "from": "now-1h", "to": "now" },
+      "panels": [
+        {
+          "id": 1,
+          "title": "Requests Total",
+          "type": "graph",
+          "datasource": "Prometheus",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+          "targets": [
+            {
+              "expr": "rate(hello_requests_total[5m])",
+              "legendFormat": "requests/sec"
+            }
+          ]
+        }
+      ]
+    }
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: hello-dashboard
+  namespace: monitoring

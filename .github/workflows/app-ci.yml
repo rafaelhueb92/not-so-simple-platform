@@ -10,6 +10,15 @@ on:
       - "app/**"
     branches: [master]
   workflow_dispatch:
+    inputs:
+      destroy:
+        description: "Destroy the deployed application resources"
+        required: false
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
 
 env:
   PYTHON_VERSION: "3.11"
@@ -172,10 +181,40 @@ jobs:
             trivy-config-results.sarif
 
   # Build Docker Image
+  destroy:
+    name: Destroy Application
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.destroy == 'true'
+    runs-on: ubuntu-latest
+    needs: [lint]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Destroy application resources
+        env:
+          ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}
+          AWS_REGION: ${{ env.AWS_REGION }}
+        run: |
+          echo "Destroy mode requested."
+          IMAGE_TAGS=$(aws ecr describe-images --repository-name "$ECR_REPOSITORY" --region "$AWS_REGION" --query 'imageDetails[].imageTags[?@!=null] | []' --output json || true)
+          if [ -n "$IMAGE_TAGS" ] && [ "$IMAGE_TAGS" != "[]" ]; then
+            echo "$IMAGE_TAGS" | jq -r '.[] | @tsv' | while read -r tag; do
+              aws ecr batch-delete-image --repository-name "$ECR_REPOSITORY" --region "$AWS_REGION" --image-ids imageTag="$tag" >/dev/null
+            done
+          fi
+          echo "Deleted ECR images for repository $ECR_REPOSITORY"
+
   build:
     name: Build Docker Image
     runs-on: ubuntu-latest
     needs: [test, security, trivy]
+    if: github.event_name != 'workflow_dispatch' || github.event.inputs.destroy != 'true'
     outputs:
       image-tag: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:sha-${{ github.sha }}
       image-digest: ${{ steps.build.outputs.digest }}

@@ -2,12 +2,53 @@ name: Infra CI
 on:
   push:
     paths:
-      - 'infra/**'
+      - "infra/**"
+  workflow_dispatch:
+    inputs:
+      destroy:
+        description: "Destroy the Terraform-managed infrastructure"
+        required: false
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
+
+env:
+  AWS_REGION: ${{ vars.AWS_REGION || secrets.AWS_REGION }}
+  TF_STATE_BUCKET: ${{ secrets.TF_STATE_BUCKET }}
+
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   plan:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+
       - uses: hashicorp/setup-terraform@v2
-      - run: terraform init
-      - run: terraform plan -var="install_argocd=false"
+        with:
+          terraform_version: 1.8.5
+
+      - name: Terraform init
+        run: terraform init -backend-config="bucket=${{ env.TF_STATE_BUCKET }}"
+
+      - name: Terraform plan
+        if: github.event_name != 'workflow_dispatch' || github.event.inputs.destroy != 'true'
+        run: terraform plan
+
+      - name: Terraform apply
+        if: github.event_name != 'workflow_dispatch' || github.event.inputs.destroy != 'true'
+        run: terraform apply -auto-approve
+
+      - name: Terraform destroy
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.destroy == 'true'
+        run: terraform destroy -auto-approve

@@ -39,9 +39,9 @@ taint + toleration + nodeSelector pattern as the ArgoCD node:
 
 Provisioning of the node itself is per-environment (the Helm values are portable):
 
-| Env | Where the node comes from |
-|-----|---------------------------|
-| KIND (dev) | `dev/kind-config.yaml` — a worker with `register-with-taints` + `node-labels` |
+| Env        | Where the node comes from                                                                      |
+| ---------- | ---------------------------------------------------------------------------------------------- |
+| KIND (dev) | `dev/kind-config.yaml` — a worker with `register-with-taints` + `node-labels`                  |
 | EKS (prod) | `infra/eks/monitoring-nodegroup.yaml` — a managed node group with matching `labels` + `taints` |
 
 Config: `dev/prometheus-values.yaml`.
@@ -103,3 +103,4 @@ install the EBS CSI driver, create a `gp3` StorageClass, and override
 https://kubernetes.io/blog/2026/01/28/experimenting-gateway-api-with-kind/
 https://github.com/kubernetes-sigs/cloud-provider-kind
 docker exec -it kind-control-plane crictl images
+https://github.com/rafaelhueb92/oidc-github-actions-role-aws

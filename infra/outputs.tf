@@ -6,7 +6,10 @@ output "cluster_connection_commands" {
   value = module.eks.cluster_connection_commands
 }
 
-output "grafana_workspace_endpoint" {
-  description = "Managed Grafana workspace endpoint URL. Null unless enable_managed_monitoring is true."
-  value       = module.eks.grafana_workspace_endpoint
+output "ecr_registry_url" {
+  value = aws_ecr_repository.hello.registry_id
+}
+
+output "ecr_repository_url" {
+  value = aws_ecr_repository.hello.name
 }

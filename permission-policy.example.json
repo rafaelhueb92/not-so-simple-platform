@@ -1,0 +1,135 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "EC2NetworkResources",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:CreateVpc",
+        "ec2:DeleteVpc",
+        "ec2:DescribeVpcs",
+        "ec2:CreateSubnet",
+        "ec2:DeleteSubnet",
+        "ec2:DescribeSubnets",
+        "ec2:CreateInternetGateway",
+        "ec2:DeleteInternetGateway",
+        "ec2:DescribeInternetGateways",
+        "ec2:CreateRouteTable",
+        "ec2:DeleteRouteTable",
+        "ec2:DescribeRouteTables",
+        "ec2:CreateRoute",
+        "ec2:ReplaceRoute",
+        "ec2:DeleteRoute",
+        "ec2:AssociateRouteTable",
+        "ec2:DisassociateRouteTable",
+        "ec2:CreateNatGateway",
+        "ec2:DeleteNatGateway",
+        "ec2:DescribeNatGateways",
+        "ec2:AllocateAddress",
+        "ec2:ReleaseAddress",
+        "ec2:DescribeAddresses",
+        "ec2:CreateTags",
+        "ec2:DeleteTags",
+        "ec2:CreateSecurityGroup",
+        "ec2:DeleteSecurityGroup",
+        "ec2:AuthorizeSecurityGroupIngress",
+        "ec2:RevokeSecurityGroupIngress",
+        "ec2:DescribeSecurityGroups"
+      ],
+      "Resource": [
+        "arn:aws:ec2:*:*:vpc/*",
+        "arn:aws:ec2:*:*:subnet/*",
+        "arn:aws:ec2:*:*:internet-gateway/*",
+        "arn:aws:ec2:*:*:route-table/*",
+        "arn:aws:ec2:*:*:route/*",
+        "arn:aws:ec2:*:*:natgateway/*",
+        "arn:aws:ec2:*:*:eip/*",
+        "arn:aws:ec2:*:*:security-group/*"
+      ]
+    },
+    {
+      "Sid": "EKSClusterAndNodeGroup",
+      "Effect": "Allow",
+      "Action": [
+        "eks:CreateCluster",
+        "eks:DescribeCluster",
+        "eks:TagResource",
+        "eks:UntagResource",
+        "eks:CreateNodegroup",
+        "eks:DescribeNodegroup",
+        "eks:UpdateNodegroupConfig",
+        "eks:DeleteNodegroup",
+        "eks:ListClusters",
+        "eks:ListNodegroups",
+        "eks:ListAddons",
+        "eks:CreateAddon",
+        "eks:DescribeAddon",
+        "eks:DescribeAddonVersions",
+        "eks:AssociateEncryptionConfig",
+        "eks:DescribeIdentityProviderConfig",
+        "eks:DeleteCluster"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "IAMForClusterRolesAndPolicies",
+      "Effect": "Allow",
+      "Action": [
+        "iam:CreateRole",
+        "iam:DeleteRole",
+        "iam:GetRole",
+        "iam:PassRole",
+        "iam:AttachRolePolicy",
+        "iam:DetachRolePolicy",
+        "iam:CreatePolicy",
+        "iam:DeletePolicy",
+        "iam:GetPolicy",
+        "iam:CreatePolicyVersion",
+        "iam:SetDefaultPolicyVersion",
+        "iam:DeletePolicyVersion",
+        "iam:GetPolicyVersion",
+        "iam:CreateOpenIDConnectProvider",
+        "iam:DeleteOpenIDConnectProvider",
+        "iam:GetOpenIDConnectProvider",
+        "iam:ListOpenIDConnectProviders",
+        "iam:CreateServiceLinkedRole"
+      ],
+      "Resource": [
+        "arn:aws:iam::*:role/*",
+        "arn:aws:iam::*:policy/*",
+        "arn:aws:iam::*:oidc-provider/*",
+        "arn:aws:iam::*:role/aws-service-role/*"
+      ]
+    },
+    {
+      "Sid": "ECRRepositoryManagement",
+      "Effect": "Allow",
+      "Action": [
+        "ecr:CreateRepository",
+        "ecr:DeleteRepository",
+        "ecr:DescribeRepositories",
+        "ecr:ListImages",
+        "ecr:BatchDeleteImage",
+        "ecr:PutImage",
+        "ecr:TagResource",
+        "ecr:UntagResource"
+      ],
+      "Resource": "arn:aws:ecr:*:*:repository/hello-app"
+    },
+    {
+      "Sid": "S3StateBackendAccess",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject",
+        "s3:DeleteObject",
+        "s3:ListBucket",
+        "s3:GetBucketLocation"
+      ],
+      "Resource": [
+        "arn:aws:s3:::STATE_BUCKET_NAME",
+        "arn:aws:s3:::STATE_BUCKET_NAME/*"
+      ]
+    }
+  ]
+}
