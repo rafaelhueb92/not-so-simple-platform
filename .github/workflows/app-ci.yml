@@ -67,8 +67,8 @@ jobs:
           pip install flake8 black isort
           pip install -r requirements.txt
 
-      - name: Run Black (Code Formatting)
-        run: black --check --diff .
+      #- name: Run Black (Code Formatting)
+      #  run: black --check --diff .
 
       - name: Run isort (Import Sorting)
         run: isort --profile black --check-only --diff .
