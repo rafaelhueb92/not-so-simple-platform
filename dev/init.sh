@@ -72,7 +72,7 @@ echo "======================================"
 echo "Building Docker images..."
 echo "======================================"
 
-docker build -t not-so-simple-platform-cluster-dev-py:v1.0 -f "${REPO_ROOT}/app/Dockerfile" "${REPO_ROOT}/app/src"
+docker build -t not-so-simple-platform-cluster-dev-py:v1.0 -f "${REPO_ROOT}/app/Dockerfile" "${REPO_ROOT}/app"
 
 echo ""
 echo "======================================"
