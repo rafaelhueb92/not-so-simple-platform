@@ -41,6 +41,14 @@ jobs:
       - name: Terraform init
         run: terraform init -backend-config="bucket=${{ env.TF_STATE_BUCKET }}"
 
+      - name: Terraform Format
+        if: github.event_name != 'workflow_dispatch' || github.event.inputs.destroy != 'true'
+        run: terraform fmt -check
+
+      - name: Terraform validate
+        if: github.event_name != 'workflow_dispatch' || github.event.inputs.destroy != 'true'
+        run: terraform validate
+
       - name: Terraform plan
         if: github.event_name != 'workflow_dispatch' || github.event.inputs.destroy != 'true'
         run: terraform plan
