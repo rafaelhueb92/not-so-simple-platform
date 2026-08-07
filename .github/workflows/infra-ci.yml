@@ -22,8 +22,12 @@ permissions:
   contents: read
   id-token: write
 
+defaults:
+  run:
+    working-directory: ./infra
+
 jobs:
-  plan:
+  deploy-infra:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
