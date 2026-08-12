@@ -60,7 +60,13 @@
                 "eks:DescribeAddonVersions",
                 "eks:AssociateEncryptionConfig",
                 "eks:DescribeIdentityProviderConfig",
-                "eks:DeleteCluster"
+                "eks:DeleteCluster",
+                "eks:CreateAccessEntry",
+                "eks:DescribeAccessEntry",
+                "eks:DeleteAccessEntry",
+                "eks:AssociateAccessPolicy",
+                "eks:ListAssociatedAccessPolicies",
+                "eks:DisassociateAccessPolicy"
             ],
             "Resource": "*"
         },
@@ -86,7 +92,10 @@
                 "iam:GetOpenIDConnectProvider",
                 "iam:ListOpenIDConnectProviders",
                 "iam:CreateServiceLinkedRole",
-                "iam:TagRole"
+                "iam:TagRole",
+                "iam:ListRolePolicies",
+                "iam:ListAttachedRolePolicies",
+                "iam:ListInstanceProfilesForRole"
             ],
             "Resource": [
                 "arn:aws:iam::*:role/*",
@@ -109,6 +118,14 @@
                 "ecr:UntagResource"
             ],
             "Resource": "arn:aws:ecr:*:*:repository/hello-app"
+        },
+        {
+            "Sid": "ECRManagement",
+            "Effect": "Allow",
+            "Action": [
+                "ecr:*"
+            ],
+            "Resource": "*"
         },
         {
             "Sid": "S3StateBackendAccess",

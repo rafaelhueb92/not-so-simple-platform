@@ -20,7 +20,7 @@ module "eks" {
         source = {
           repoURL        = "https://github.com/rafaelhueb92/not-so-simple-platform.git"
           targetRevision = "HEAD"
-          path           = "apps/manifest"
+          path           = "app/manifest"
         }
         destination = {
           server    = "https://kubernetes.default.svc"
