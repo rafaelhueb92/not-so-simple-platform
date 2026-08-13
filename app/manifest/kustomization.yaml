@@ -1,6 +1,14 @@
+# kustomization.yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+
 resources:
   - deployment.yaml
   - service.yaml
   - servicemonitor.yaml
+  - dashboard.yaml
+
+images:
+  - name: hello-app
+    newName: 123456789012.dkr.ecr.us-east-1.amazonaws.com/hello-app
+    newTag: latest

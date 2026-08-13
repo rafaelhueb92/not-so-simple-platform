@@ -17,3 +17,4 @@ dev/secret-argo.txt
 secret-grafana.txt
 permission-policy.json
 /app/*.tf
+.abacusai/
