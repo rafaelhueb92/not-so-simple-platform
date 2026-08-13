@@ -96,7 +96,8 @@
                 "iam:TagRole",
                 "iam:ListRolePolicies",
                 "iam:ListAttachedRolePolicies",
-                "iam:ListInstanceProfilesForRole"
+                "iam:ListInstanceProfilesForRole",
+                "iam:ListPolicyVersions"
             ],
             "Resource": [
                 "arn:aws:iam::*:role/*",
